@@ -58,6 +58,7 @@ public:
         }
 };
 
+
 template <typename T>
 void SpaceRoute<T> :: addWaypointAtBeginning(T& data)
 {
@@ -71,8 +72,8 @@ void SpaceRoute<T> :: addWaypointAtBeginning(T& data)
         newNode->prev = tail;
         tail = newNode;
     }
-
 }
+
 
 
 
