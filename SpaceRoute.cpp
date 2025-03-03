@@ -47,8 +47,9 @@ public:
     void traverseBackward();
     Node<T>* getWaypoint(int index);
     void setWaypoint(int index, T& data);
-    void print(){
 
+    void print()
+    {
             Node<T>* current = head;
             while (current) {
                 current->print();
@@ -57,5 +58,23 @@ public:
             cout << endl;
         }
 
+    template <typename T>
+    void SpaceRoute<T> :: addWaypointAtBeginning(T& data)
+    {
+        Node<T>* newNode = new Node<T>(data);
+        if (!tail)
+        {
+            head = tail = newNode;
+        } else
+        {
+            tail->next = newNode;
+            newNode->prev = tail;
+            tail = newNode;
+        }
+
+    }
+
 };
+
+
 
