@@ -34,7 +34,7 @@ private:
     Node<T>* tail;
 
 public:
-    SpaceRoute();  // Constructor
+    SpaceRoute() : head(nullptr), tail(nullptr) {}  // Constructor
     ~SpaceRoute(); // Destructor
 
     void addWaypointAtBeginning(T& data);
@@ -58,6 +58,15 @@ public:
         }
 };
 
+template <typename T>
+SpaceRoute<T>::~SpaceRoute() {
+    Node<T>* current = head;
+    while (current) {
+        Node<T>* nextNode = current->next;
+        delete current;
+        current = nextNode;
+    }
+}
 
 template <typename T>
 void SpaceRoute<T> :: addWaypointAtBeginning(T& data)
@@ -74,7 +83,134 @@ void SpaceRoute<T> :: addWaypointAtBeginning(T& data)
     }
 }
 
+template <typename T>
+void SpaceRoute<T>::addWaypointAtEnd(T& data)
+{
+    Node<T>* newNode = new Node<T>(data);
+    if (!tail)
+    {
+        head = tail = newNode;
+    } else {
+        tail->next = newNode;
+        newNode->prev = tail;
+        tail = newNode;
+    }
+}
 
+template <typename T>
+void SpaceRoute<T>::addWaypointAtIndex(int index, T& data) {
+    if (index < 0) return;
 
+    if (index == 0) {
+        addWaypointAtBeginning(data);
+        return;
+    }
 
+    Node<T>* newNode = new Node<T>(data);
+    Node<T>* current = head;
+    int count = 0;
 
+    while (current && count < index) {
+        current = current->next;
+        count++;
+    }
+
+    if (current) {
+        newNode->next = current;
+        newNode->prev = current->prev;
+        if (current->prev) current->prev->next = newNode;
+        current->prev = newNode;
+    } else {
+        addWaypointAtEnd(data);  // If index is out of bounds, add at the end
+    }
+}
+
+template <typename T>
+void SpaceRoute<T>::removeWaypointAtBeginning() {
+    if (!head) return;
+
+    Node<T>* temp = head;
+    head = head->next;
+    if (head) head->prev = nullptr;
+    delete temp;
+
+    if (!head) tail = nullptr;  // If the list is empty now, tail should also be null
+}
+
+template <typename T>
+void SpaceRoute<T>::removeWaypointAtEnd() {
+    if (!tail) return;
+
+    Node<T>* temp = tail;
+    tail = tail->prev;
+    if (tail) tail->next = nullptr;
+    delete temp;
+
+    if (!tail) head = nullptr;  // If the list is empty now, head should also be null
+}
+
+template <typename T>
+void SpaceRoute<T>::removeWaypointAtIndex(int index) {
+    if (index < 0 || !head) return;
+
+    if (index == 0) {
+        removeWaypointAtBeginning();
+        return;
+    }
+
+    Node<T>* current = head;
+    int count = 0;
+
+    while (current && count < index) {
+        current = current->next;
+        count++;
+    }
+
+    if (current) {
+        if (current->prev) current->prev->next = current->next;
+        if (current->next) current->next->prev = current->prev;
+        delete current;
+    }
+}
+
+template <typename T>
+void SpaceRoute<T>::traverseForward() {
+    Node<T>* current = head;
+    while (current) {
+        current->print();
+        current = current->next;
+    }
+    cout << endl;
+}
+
+template <typename T>
+void SpaceRoute<T>::traverseBackward() {
+    Node<T>* current = tail;
+    while (current) {
+        current->print();
+        current = current->prev;
+    }
+    cout << endl;
+}
+
+template <typename T>
+Node<T>* SpaceRoute<T>::getWaypoint(int index) {
+    if (index < 0) return nullptr;
+
+    Node<T>* current = head;
+    int count = 0;
+    while (current && count < index) {
+        current = current->next;
+        count++;
+    }
+
+    return current;
+}
+
+template <typename T>
+void SpaceRoute<T>::setWaypoint(int index, T& data) {
+    Node<T>* node = getWaypoint(index);
+    if (node) {
+        node->data = data;
+    }
+}
